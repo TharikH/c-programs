@@ -28,7 +28,7 @@ void fcfs(int *a, int *b, int len)
         // printf("%d\n",small);
         if (time < a[small])
         { //if arrival time greater than total time,so we need to add arrival
-            time += a[small];
+            time += (time-a[small]);
         }
         time += b[small];  //to add burst time to total time
         t[small] = time;   //to store finish time so later it can be made to turnaround by subtracting
@@ -111,7 +111,7 @@ int deq(int *a, int *front, int *rear, int len)
 }
 void rr(int *a, int *b, int len)
 {
-    int slice = 2, *t = (int *)calloc(len, sizeof(int)), finish[len], time = 0, small, w[len], front = -1, rear = -1, bt[len], val, flag, q[len], temp;
+    int slice = 3, *t = (int *)calloc(len, sizeof(int)), finish[len], time = 0, small, w[len], front = -1, rear = -1, bt[len], val, flag, q[len], temp;
     for (int i = 0; i < len; i++)
         bt[i] = b[i];
     while (1)
@@ -176,7 +176,6 @@ void rr(int *a, int *b, int len)
     {
         finish[i] -= a[i];
         w[i] = finish[i] - b[i];
-        printf("%d\n",finish[i]);
     }
     printf("Waiting time =  %f \n", average(w, len));
     printf("Turnaround time =  %f\n", average(finish, len));
@@ -222,38 +221,38 @@ void main()
 
     while (1)
     {
-        int ch, i = 5;
+        int ch, i = 1;
         char c;
-        // int *bt = (int *)malloc(sizeof(int)), *at = (int *)malloc(sizeof(int)), *pt = (int *)malloc(sizeof(int));
+        int *bt = (int *)malloc(sizeof(int)), *at = (int *)malloc(sizeof(int)), *pt = (int *)malloc(sizeof(int));
         printf("Choose which Scheduling\n1.FCFS\n2.SJF\n3.RR\n4.Priority\n5.Exit\n");
         scanf("%d", &ch);
         if (ch == 5)
         {
             exit(0);
         }
-        // while (1)
-        // {
-        //     printf("enter burst: ");
-        //     scanf("%d", &bt[i-1]);
-        //     printf("enter arrival: ");
-        //     scanf("%d", &at[i-1]);
-        //     if (ch == 4)
-        //     {
-        //         printf("enter priority: ");
-        //         scanf("%d", &pt[i]);
-        //     }
-        //     printf("\ndo you wanna continue? y/n :");
-        //     scanf(" %c", &c);
-        //     if (c == 'n')
-        //         break;
-        //     i++;
-        //     bt = realloc(bt, sizeof(int) * i);
-        //     at = realloc(at, sizeof(int) * i);
-        //     if(ch==4){
-        //         pt = realloc(pt, sizeof(int) * i);
-        //     }
-        // }
-        int bt[] = {3,6,1,2,4}, at[] = {0,1,3,2,4}, pt[] = {3,4,9,7,8};
+        while (1)
+        {
+            printf("enter burst: ");
+            scanf("%d", &bt[i-1]);
+            printf("enter arrival: ");
+            scanf("%d", &at[i-1]);
+            if (ch == 4)
+            {
+                printf("enter priority: ");
+                scanf("%d", &pt[i-1]);
+            }
+            printf("\ndo you wanna continue? y/n :");
+            scanf(" %c", &c);
+            if (c == 'n')
+                break;
+            i++;
+            bt = realloc(bt, sizeof(int) * i);
+            at = realloc(at, sizeof(int) * i);
+            if(ch==4){
+                pt = realloc(pt, sizeof(int) * i);
+            }
+        }
+        // int bt[] = {3,6,1,2,4}, at[] = {0,1,3,2,4}, pt[] = {3,4,9,7,8};
         // for(int j=0;j<i;j++)
         //     printf("%d-%d\n",bt[j],at[i]);
         switch (ch)
