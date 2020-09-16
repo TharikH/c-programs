@@ -42,9 +42,14 @@ void fcfs(int *a, int head, int len)
     printf("total seek for fcfs is: %d\n", dist);
 }
 
-int scanGeneral(int *a, int head, int len, int val,int last,int c)
+int scanGeneral(int *arr, int head, int len, int val, int last, int c)
 {
-    int pos, dist = 0, i, d=2,left=0,right=len;
+    int pos, dist = 0, i, d = 2, left = 0, right = len,a[len];
+    for ( i = 0; i < len; i++)
+    {
+        a[i]=arr[i];
+    }
+    
     sort(a, len);
     for (i = 0; i < len; i++)
     {
@@ -63,70 +68,86 @@ int scanGeneral(int *a, int head, int len, int val,int last,int c)
                 dist += (diff(head, a[i]));
                 head = a[i];
             }
-            if(d){
-                head=a[i+1];
+            if (d)
+            {
+                head = a[i + 1];
                 dist += head;
                 head = 0;
-                val=1;
-                if(c){
-                    val=0;
-                    dist+=last;
-                    head=last;
-                    left=pos;
-                    pos=len;
+                val = 1;
+                if (c)
+                {
+                    val = 0;
+                    dist += last;
+                    head = last;
+                    left = pos;
+                    pos = len;
                 }
             }
         }
-        else{
+        else
+        {
             for (i = pos; i < right; i++)
             {
                 dist += (diff(head, a[i]));
                 head = a[i];
             }
-            if(d){
-                head=a[i-1];
-                dist += last-head;
+            if (d)
+            {
+                head = a[i - 1];
+                dist += last - head;
                 head = last;
-                val=0;
-                if(c){
-                    val=1;
-                    dist+=last;
-                    head=0;
-                    right=pos;
-                    pos=0;
+                val = 0;
+                if (c)
+                {
+                    val = 1;
+                    dist += last;
+                    head = 0;
+                    right = pos;
+                    pos = 0;
                 }
             }
         }
     }
     return dist;
 }
-void scan(int *a, int head, int len,int dir,int last)
+void scan(int *a, int head, int len, int dir, int last)
 {
     int dist, val = 0;
-    dist = scanGeneral(a, head, len, dir,last,val);
-    printf("\nSeek time for scan is :%d\n", dist);
+    dist = scanGeneral(a, head, len, dir, last, val);
+    printf("\nSeek dist for scan is :%d\n", dist);
 }
-void cScan(int *a, int head, int len,int dir,int last)
+void cScan(int *a, int head, int len, int dir, int last)
 {
     int dist, val = 1;
-    dist = scanGeneral(a, head, len, dir,last,val);
-    printf("\nSeek time for C-scan is :%d\n", dist);
+    dist = scanGeneral(a, head, len, dir, last, val);
+    printf("\nSeek dist for C-scan is :%d\n", dist);
 }
 
 void main()
 {
-    int ch, len, head,last,dir;
+    int ch, len, head, last, dir;
+    // int a[] = {98, 137, 122, 183, 14, 133, 65, 78};
+    // len = sizeof(a) / sizeof(a[0]);
+    // head = 54;last=199;dir=0;
+    // int len, head, last, dir;
+    printf("enter number of io req: ");
+    scanf("%d", &len);
+    int a[len];
+    for (int i = 0; i < len; i++)
+    {
+        printf("enter req:- ");
+        scanf("%d", &a[i]);
+    }
+    printf("enter head pos : ");
+    scanf("%d", &head);
+    printf("\n\nhead pos: %d\n ", head);
+    printf("Values are :\n");
+    for (int i = 0; i < len; i++)
+    {
+        printf("%d ", a[i]);
+    }
     while (1)
     {
-        int a[] = {98, 137, 122, 183, 14, 133, 65, 78};
-        len = sizeof(a) / sizeof(a[0]);
-        head = 54;last=199;dir=0;
-        printf("\n\nhead pos: %d\n ", head);
-        printf("Values are :\n");
-        for (int i = 0; i < len; i++)
-        {
-            printf("%d ", a[i]);
-        }
         printf("choose operation: \n1.FCFS\n2.SCAN\n3.C-SCAN\n4.EXIT\n option: ");
         scanf("%d", &ch);
         switch (ch)
@@ -135,11 +156,19 @@ void main()
             fcfs(a, head, len);
             break;
         case 2:
-            scan(a, head, len,dir,last);
+            printf("enter dir\n0 for left\n1 for right : ");
+            scanf("%d", &dir);
+            printf("last pos: ");
+            scanf("%d", &last);
+            scan(a, head, len, dir, last);
 
             break;
         case 3:
-            cScan(a, head, len,dir,last);
+            printf("enter dir\n0 for left\n1 for right : ");
+            scanf("%d", &dir);
+            printf("last pos: ");
+            scanf("%d", &last);
+            cScan(a, head, len, dir, last);
             break;
         case 4:
             exit(0);

@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-const int r = 3;
+int r = 3;
 int great(int *large, int *small, int len)
 {
     int flag = 0;
@@ -21,7 +21,8 @@ void sumAvail(int *avail, int *alloc, int len)
         avail[i] += alloc[i];
     }
 }
-void diffAvail(int *avail, int *alloc, int len){
+void diffAvail(int *avail, int *alloc, int len)
+{
     for (int i = 0; i < len; i++)
     {
         avail[i] -= alloc[i];
@@ -29,7 +30,7 @@ void diffAvail(int *avail, int *alloc, int len){
 }
 int bankers(int alloc[][r], int max[][r], int *avail, int p_len, int r_len)
 {
-    int *process_finish = calloc(p_len, sizeof(int)), need[p_len][r_len], k = 0, cycle = -1, flag = 0, ord = 1;
+    int *process_finish = calloc(p_len, sizeof(int)), need[p_len][r_len], k = 0, cycle = -1, flag = 0, ord = 1, finish[p_len];
     for (int i = 0; i < p_len; i++)
     {
         for (int j = 0; j < r_len; j++)
@@ -55,6 +56,7 @@ int bankers(int alloc[][r], int max[][r], int *avail, int p_len, int r_len)
         if (great(avail, need[k], r_len) && process_finish[k] == 0)
         {
             process_finish[k] = ord;
+            finish[ord - 1] = k;
             ord++;
 
             sumAvail(avail, alloc[k], r_len);
@@ -74,38 +76,64 @@ int bankers(int alloc[][r], int max[][r], int *avail, int p_len, int r_len)
     }
     else
     {
-        // printf("poss");
+        printf("order is \n");
+        for (int i = 0; i < p_len; i++)
+        {
+            printf("p%d ", finish[i]);
+        }
+
         return 1;
     }
 }
 void resource(int alloc[][r], int max[][r], int *avail, int p_len, int r_len, int *req, int index)
-{   int need[r_len];
-    for(int i=0;i<r_len;i++){
-        need[i]=max[index][i]-alloc[index][i];
+{
+    int need[r_len];
+    for (int i = 0; i < r_len; i++)
+    {
+        need[i] = max[index][i] - alloc[index][i];
     }
-    if (great(avail,req,r_len) && great(need,req,r_len) )
-    {   
-        sumAvail(alloc[index],req,r_len);
-        diffAvail(avail,req,r_len);
-        if(bankers(alloc, max, avail, p_len, r_len))
+    if (great(avail, req, r_len) && great(need, req, r_len))
+    {
+        sumAvail(alloc[index], req, r_len);
+        diffAvail(avail, req, r_len);
+        if (bankers(alloc, max, avail, p_len, r_len))
             printf("\nPossible\n");
-        else{
-            printf("\neadlock\n");
+        else
+        {
+            printf("\ndeadlock\n");
         }
     }
-    else{
+    else
+    {
         printf("\nnot poss\n");
     }
-    
 }
 void main()
 {
-    int p_len = 5, r_len = 3;
-    int alloc[5][3] = {{0, 1, 0}, {2, 0, 0}, {3, 0, 2}, {2, 1, 1}, {0, 0, 2}};
-    int max[5][3] = {{7, 5, 3}, {3, 2, 2}, {9, 0, 2}, {2, 2, 2}, {4, 3, 3}};
-    int avail[3] = {3, 3, 2}, ch,req[3],index;
-    // int **a=alloc,**m=max;
-    printf("\nEnter \n1.safety \n2.resource\n");
+    // int p_len = 5, r_len = 3;
+    // int alloc[5][3] = {{0, 1, 0}, {2, 0, 0}, {3, 0, 2}, {2, 1, 1}, {0, 0, 2}};
+    // int max[5][3] = {{7, 5, 3}, {3, 2, 2}, {9, 0, 2}, {2, 2, 2}, {4, 3, 3}};
+    // int avail[3] = {3, 3, 2},req[3];
+    int ch, index, p_len, r_len;
+    printf("enter no of process and resources :");
+    scanf("%d %d", &p_len, &r_len);
+    int alloc[p_len][r_len], max[p_len][r_len], avail[r_len], req[r_len];
+    r = r_len;
+    for (int i = 0; i < p_len; i++)
+    {
+        printf("\nenter details of process %d\n", i);
+        for (int j = 0; j < r_len; j++)
+        {
+            printf("enter allocated and max ");
+            scanf("%d %d", &alloc[i][j], &max[i][j]);
+        }
+    }
+    for (int i = 0; i < r_len; i++)
+    {
+        printf("\nAvail ");
+        scanf("%d", &avail[i]);
+    }
+    printf("\nEnter \n1.safety \n2.resource\n3.Exit\n");
     scanf("%d", &ch);
     switch (ch)
     {
@@ -126,12 +154,15 @@ void main()
         printf("request the resource\n");
         for (int i = 0; i < r_len; i++)
         {
-            printf(" enter request\n");
+            printf(" enter request: ");
             scanf("%d", &req[i]);
         }
-        resource(alloc, max, avail, p_len, r_len,req,index);
+        resource(alloc, max, avail, p_len, r_len, req, index);
+        break;
+    case 3:
+        exit(0);
     default:
-
+        printf("Wrong choice\n");
         break;
     }
 }
