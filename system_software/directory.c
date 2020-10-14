@@ -45,14 +45,29 @@ void add(dir *root, int isdir)
 }
 dir *findParent(dir *root, char *name)
 {
-    dir *ptr = root->sub_dir;
+    dir *ptr = root;
     while (ptr != NULL)
     {
-        if (strcmp(ptr->name, name))
+        if (strcmp(ptr->name, name)==0 && ptr->isdir==1)
         {
             return ptr;
         }
         ptr=ptr->next;
+    }
+    return ptr;
+}
+dir *findParentPath(dir *root,char **path){
+    dir *ptr=root;
+    for(int i=0;i<10;i++){
+        ptr=findParent(ptr,path[i]);
+        if(ptr == NULL){
+            break;
+        }
+        if(strcmp(path[i+1],"")==0){
+            break;
+        }else{
+            ptr=ptr->sub_dir;
+        }
     }
     return ptr;
 }
@@ -92,7 +107,7 @@ void print(dir *root)
     dir *ptr = root;
     while (ptr != NULL)
     {
-        printf(" %s ", ptr->name);
+        printf(" %s(%d) ", ptr->name,ptr->isdir);
         ptr = ptr->next;
     }
 }
@@ -111,7 +126,7 @@ void twolevel()
         case 1:
             printf("enter which user : ");
             scanf(" %s", name);
-            ptr = findParent(root, name);
+            ptr = findParent(root->sub_dir, name);
             if (ptr != NULL)
             {
                 add(ptr, 0);
@@ -124,7 +139,7 @@ void twolevel()
         case 2:
             printf("enter which user : ");
             scanf(" %s", name);
-            ptr = findParent(root, name);
+            ptr = findParent(root->sub_dir, name);
             if (ptr != NULL)
             {
                 delete (ptr);
@@ -143,7 +158,7 @@ void twolevel()
         case 5:
             printf("enter which user : ");
             scanf(" %s", name);
-            ptr = findParent(root, name);
+            ptr = findParent(root->sub_dir, name);
             print(ptr->sub_dir);
             break;
         case 6:
@@ -186,12 +201,71 @@ void single()
         }
     }
 }
+char **splitPath(char *s){
+    int size=10,k=0,i=0,j=0;
+    char **arr=(char **)malloc(sizeof(char *)*size);
+
+    for(k=0;k<size;k++){
+        *(arr+k)=(char *)malloc(sizeof(char) * size);
+    }
+    for(k=0;s[k]!='\0';k++){
+        if(s[k] !='/'){
+            arr[i][j++]=s[k];
+        }else{
+            arr[i][j]='\0';
+            i++;
+            j=0;
+        }
+    }
+    return arr;
+}
 void heirarchy()
 {
+    int ch;
+    char name[20];
+    char path[100];
+    char **path_array;
+    dir *root = (dir *)malloc(sizeof(dir)), *ptr;
+    strcpy(root->name,"root");
+    root->isdir=1;
+    while (1)
+    {
+        printf("\nenter option \n1.create file\n2.delete file/dir\n3.create dir\n4.print\n5.back\nchoose  : ");
+        scanf("%d", &ch);
+        printf("Specify path :");
+        scanf(" %s",path);
+        path_array=splitPath(path);
+        ptr=findParentPath(root,path_array);
+        if(ptr !=NULL){
+        switch (ch)
+        {
+        case 1:
+            add(ptr,0);
+            break;
+        case 2:
+            delete(ptr);
+            break;
+        case 3:
+            add(ptr,1);
+            break;
+        case 4:
+            print(ptr->sub_dir);
+            break;
+        case 5:
+            return;
+        default:
+            break;
+        }
+        }else{
+            printf("\npath not correct\n");
+        }
+
+    }
 }
 void main()
 {
-    int op;
+    while(1){
+        int op;
     printf("enter options:\n1.single-level\n2.two-level\n3.heirarchical\n4.exit\nchoose  : ");
     scanf("%d", &op);
     switch (op)
@@ -210,5 +284,6 @@ void main()
     default:
         printf("Wrong option");
         break;
+    }
     }
 }
