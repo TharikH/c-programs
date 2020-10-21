@@ -190,9 +190,9 @@ void main()
     }
     printf("\n");
     // int req[] = {7, 0, 1, 2, 0, 3, 0, 4, 2, 3, 0, 3, 2, 3};
-    printf("enter option \n1.fifo\n2.lru\n3.optimal\n4.exit\n");
+    while(1){
+        printf("enter option \n1.fifo\n2.lru\n3.optimal\n4.exit\n");
     scanf("%d", &ch);
-
     switch (ch)
     {
     case 1:
@@ -209,5 +209,6 @@ void main()
     default:
         printf("\nwrong op\n");
         break;
+    }
     }
 }

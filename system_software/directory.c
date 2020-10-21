@@ -29,11 +29,12 @@ void add(dir *root, int isdir)
     char name[20];
     printf("enter name : ");
     scanf(" %s", name);
-    if (!isexist(root->sub_dir, name))
+    if (!isexist(root->sub_dir, name) && strcmp(name,"")!=0)
     {
         dir *new = (dir *)malloc(sizeof(dir));
         new->isdir = isdir;
         new->next = root->sub_dir;
+        new->sub_dir=NULL;
         root->sub_dir = new;
         root->count++;
         strcpy(new->name, name);
@@ -71,6 +72,19 @@ dir *findParentPath(dir *root,char **path){
     }
     return ptr;
 }
+void deleteAll(dir* root){
+    if(root == NULL){
+        return ;
+    }
+    else{
+        if(root->isdir == 1){
+            deleteAll(root->sub_dir);
+        }
+        deleteAll(root->next);
+        free(root);
+        root=NULL;
+    }
+}
 void delete (dir *root)
 {
     char name[20];
@@ -82,7 +96,11 @@ void delete (dir *root)
     {
         root->sub_dir = ptr->next;
         flag = 1;
+        if(ptr->isdir)
+            deleteAll(ptr->sub_dir);
         free(ptr);
+        ptr=NULL;
+        ptr1=NULL;
     }
     while (ptr != NULL)
     {
@@ -90,7 +108,11 @@ void delete (dir *root)
         {
             flag = 1;
             ptr1->next = ptr->next;
+            if(ptr->isdir)
+                deleteAll(ptr->sub_dir);
             free(ptr);
+            ptr1=NULL;
+            ptr=NULL;
             break;
         }
         ptr1 = ptr;
