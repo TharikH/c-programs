@@ -1,44 +1,39 @@
 #include<stdio.h>
 #include<pthread.h>
 #include<stdlib.h>
+#include<semaphore.h>
+
 #define MAX 5
 
-int arr[MAX],sem=1,full=0,empty=MAX;
-
-void signal(int *s){
-    (*s)++;
-}
-void wait(int *s){
-    while(*s <= 0);
-    (*s)--;
-}
-
+int arr[MAX],in=0,out=0;
+sem_t empty,full;
+pthread_mutex_t sem;
 void producer(int val){
-    wait(&empty);
-    wait(&sem);
-    arr[full]=val;
-    // printf("%d ",arr[full]);
-    signal(&sem);
-    signal(&full);
+    sem_wait(&empty);
+    pthread_mutex_lock(&sem);
+    arr[in]=val;
+    printf("producer producing :%d \n",arr[in]);
+    in=(in + 1)%MAX;
+    pthread_mutex_unlock(&sem);
+    sem_post(&full);
 }
 void consumer(){
-    wait(&full);
-    wait(&sem);
-    printf("%d ",arr[full - 1]);
-    signal(&sem);
-    signal(&empty);
+    sem_wait(&full);
+    pthread_mutex_lock(&sem);
+    printf("consumer consuming :%d \n",arr[out]);
+    out=(out + 1)%MAX;
+    pthread_mutex_unlock(&sem);
+    sem_post(&empty);
 }
 void *producerLoop(void *temp){
-    printf("hell");
-    for (int i = 0; i < 8; i++)
+    for (int i = 1; i < 8; i++)
     {   
         producer(i);
     }
     return NULL;
 }
 void *consumerLoop(void *temp){
-    printf("hell000");
-    for (int i = 0; i < 8; i++)
+    for (int i = 1; i < 8; i++)
     {
         consumer();
     }
@@ -46,7 +41,8 @@ void *consumerLoop(void *temp){
 }
 void main(){
     pthread_t prod,cons;
-    printf(" 000 ");
+    sem_init(&empty,0,MAX-1);
+    sem_init(&full,0,0);
     pthread_create(&prod,NULL,producerLoop,NULL);
     pthread_create(&cons,NULL,consumerLoop,NULL);
 
