@@ -1,0 +1,6 @@
+        START       100
+.cfvgbhn
+        ADD         L1
+L1      LDA         ONE
+L2      RESW        2
+        END     

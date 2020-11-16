@@ -1,0 +1,4 @@
+ADD     12
+SUB     34
+LDA     00
+STA     18
