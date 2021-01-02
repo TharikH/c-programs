@@ -206,12 +206,18 @@ int firstPass(char **split, int *locctr)
         if (strcasecmp(split[1], "END") == 0)
         {
             addr = paddingZero(decToHex(*locctr));
-            if (!(split[2][0] > '0' || split[2][0] < '9'))
+            if (!(split[2][0] > '0' && split[2][0] < '9'))
             {
-                split[2][0] = '\0';
+                // split[2][0] = '\0';
+                strcpy(split[2],"\0");
             }
             sprintf(line, "%s\t%s\t%s\t%s", addr, split[0], split[1], split[2]);
+            // printf("%s\n",split[2]);
+            // printf("%s-%s-%s",split[0],split[1],split[2]);
             writeToIntermediate(line);
+            char locstring[10];
+            sprintf(locstring,"count:%s",paddingZero(decToHex(*locctr)));
+            writeToIntermediate(locstring);
             return 0;
         }
         else if ((pseudo_add = pseudoCode(split)) > 0)
@@ -221,16 +227,20 @@ int firstPass(char **split, int *locctr)
         }
         else if (isValidOpcode(split[1]))
         {
-            isindex = isIndexing(split[2]);
+            if(split[2][0] == '\0'){
+                printf("hello");
+            }
+            // isindex = isIndexing(split[2]);
             addr = paddingZero(decToHex(*locctr));
             (*locctr) += 3;
         }
     }
 
-    if (isindex)
-    {
-        indexAddress(addr);
-    }
+    // if (isindex)
+    // {
+    //     indexAddress(addr);
+    //     // printf("%s",addr);
+    // }
     if (split[0][0] != '\0')
     {
         writeToSymbol(split[0], addr);
@@ -270,7 +280,7 @@ void main()
                 break;
             }
         }
-        // printf("%s %s %s", split_code[0], split_code[1], split_code[2]);
+        printf("%s%s%s\n", split_code[0], split_code[1], split_code[2]);
         free(split_code);
         // printf("%s ",line);
     }
