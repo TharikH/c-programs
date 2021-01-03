@@ -268,6 +268,9 @@ void main()
         split_code[0] = (char *)malloc(sizeof(char) * 8);
         split_code[1] = (char *)malloc(sizeof(char) * 8);
         split_code[2] = (char *)malloc(sizeof(char) * 8);
+        split_code[0][0]='\0';
+        split_code[1][0]='\0';
+        split_code[2][0]='\0';
         split_by_delimeter(line, split_code, ' ');
         if (split_code[0][0] == '.')
         {

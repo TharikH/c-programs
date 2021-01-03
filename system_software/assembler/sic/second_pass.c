@@ -204,19 +204,19 @@ char *findLabelAddress(char *label)
 void countText(FILE *f)
 {
 
-    char *length=decToHex(textcount);
-    printf("%s\n",length);
+    char *length=decToHex(textcount),temp;
+    // printf("check -- %s\n",length);
     if(strlen(length) < 2){
-        length[1]=length[0];
+        // printf("check -- %s\n",length);
+        temp=length[0];
+        length[2]=length[1];
+        length[1]=temp;
         length[0]='0';
-        length[3]='\0';
     }
+        // printf("check -- %s\n",length);
     fseek(f, (-(textcount*2)-2), SEEK_CUR);
-    printf("%ld\n",ftell(f));
-    // printf("%s\n%d",decToHex(textcount),-textcount-2);
     fprintf(f, "%s", length);
     fseek(f, (textcount*2), SEEK_CUR);
-    printf("%ld\n",ftell(f));
     textcount = 0;
 }
 void writeToTextRecord(char *opcode, char *address, char *label, FILE *f)
@@ -228,10 +228,18 @@ void writeToTextRecord(char *opcode, char *address, char *label, FILE *f)
     }
     else if((labeladdress=isIndexing(label)) != NULL){
         labeladdress = findLabelAddress(labeladdress);
+        if(labeladdress == NULL){
+            writeToList("NO SYMBOL FOUND ERROR!");
+            exit(0);
+        }
         indexAddress(labeladdress);
     }
     else{
         labeladdress = findLabelAddress(label);
+        if(labeladdress == NULL){
+            writeToList("NO SYMBOL FOUND ERROR!");
+            exit(0);
+        }
     }
     if (textcount == 0 || textcount + 3 > TEXTLENGTH)
     {
@@ -251,6 +259,7 @@ void writeToTextRecord(char *opcode, char *address, char *label, FILE *f)
 int secondPass(char **line,FILE *f)
 {
     char opcode[5], address[6], label[8];
+    // fprintf(f,"hello kutta");
     // printf("%s-%s-%s-%s\n", line[0], line[1], line[2],line[3]);
     if (strcmp(line[2], "START") == 0)
     {
@@ -296,10 +305,16 @@ int secondPass(char **line,FILE *f)
         split[0]=(char *)malloc(sizeof(char) * 3);
         split[1]=(char *)malloc(sizeof(char) * 3);
         split[2]=(char *)malloc(sizeof(char) * 3);
+        split[0][0]='\0';
+        split[1][0]='\0';
+        split[2][0]='\0';
+        strcpy(address,line[0]);
         split_by_delimeter(line[3],split,'\'');
+        // printf("test -- %s %s %s\n",split[0],split[1],split[2]);
         if(split[0][0] == 'X'){
             strcpy(label,split[1]);
         }
+        printf(" check - %s\n",address);
         if(textcount == 0 || textcount+1>TEXTLENGTH){
             if(textcount+1>TEXTLENGTH){
                 countText(f);
@@ -315,7 +330,7 @@ int secondPass(char **line,FILE *f)
         strcpy(opcode, line[1]);
         strcpy(address, line[0]);
         strcpy(label, line[2]);
-        // printf("%s-%s-%s\n", opcode, address, label);
+        // printf("Error:%s-%s-%s\n", opcode, address, label);
         writeToTextRecord(opcode, address, label, f);
     }
     else if(line[3][0] != '\0'){
@@ -365,7 +380,7 @@ void main()
                     break;
                 }
             }
-            // printf("%s-%s-%s-%s\n", split_code[0], split_code[1], split_code[2],split_code[3]);
+            printf("%s-%s-%s-%s\n", split_code[0], split_code[1], split_code[2],split_code[3]);
             free(split_code);
             // printf("%s ",line);
         }
