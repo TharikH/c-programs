@@ -1,0 +1,13 @@
+CPY     START      100
+        STA        L1
+        ADD        L2
+        SUB        L1,X
+        RMO        S,T
+        +LDA       L1
+        BASE       
+        NOBASE     
+        RSUB       
+L1      RESW       5
+LQ      BYTE       X'F1'
+L2      WORD       10
+        END        100

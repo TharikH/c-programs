@@ -1,0 +1,8 @@
+ADD     12      3
+SUB     34      3
+LDA     00      3
+STA     18      3
+RSUB    40      3
+CLEAR   13      2
+RMO     70      2
++LDA    10      4
