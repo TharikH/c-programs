@@ -173,7 +173,7 @@ int pseudoCode(char **split)
 }
 int firstPass(char **split, int *locctr)
 {
-    char *addr = (char *)malloc(sizeof(char)), *line = (char *)malloc(sizeof(char) * 36);
+    char *adreturn temp;dr = (char *)malloc(sizeof(char)), *line = (char *)malloc(sizeof(char) * 36);
     int isindex = 0, pseudo_add, opsize;
     if (strcasecmp(split[1], "START") == 0)
     {
