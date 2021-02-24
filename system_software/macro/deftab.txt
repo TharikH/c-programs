@@ -1,0 +1,4 @@
+RD MACRO &A
+	STA	?1
+	LDA	?1
+	MEND	

@@ -1,0 +1,4 @@
+PGM	MACRO	&A,&B
+-	LDA	?0
+-	STA	?1
+-	MEND	-
