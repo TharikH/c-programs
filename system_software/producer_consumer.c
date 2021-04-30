@@ -6,23 +6,27 @@
 #define MAX 5
 
 int arr[MAX],in=0,out=0;
-sem_t empty,full;
-pthread_mutex_t sem;
+sem_t empty,full,sem;
+// pthread_mutex_t sem;
 void producer(int val){
     sem_wait(&empty);
-    pthread_mutex_lock(&sem);
+    sem_wait(&sem);
+    // pthread_mutex_lock(&sem);
     arr[in]=val;
     printf("producer producing :%d \n",arr[in]);
     in=(in + 1)%MAX;
-    pthread_mutex_unlock(&sem);
+    sem_post(&sem);
+    // pthread_mutex_unlock(&sem);
     sem_post(&full);
 }
 void consumer(){
     sem_wait(&full);
-    pthread_mutex_lock(&sem);
+    sem_wait(&sem);
+    // pthread_mutex_lock(&sem);
     printf("consumer consuming :%d \n",arr[out]);
     out=(out + 1)%MAX;
-    pthread_mutex_unlock(&sem);
+    sem_post(&sem);
+    // pthread_mutex_unlock(&sem);
     sem_post(&empty);
 }
 void *producerLoop(void *temp){
@@ -43,6 +47,7 @@ void main(){
     pthread_t prod,cons;
     sem_init(&empty,0,MAX-1);
     sem_init(&full,0,0);
+    sem_init(&sem,0,1);
     pthread_create(&prod,NULL,producerLoop,NULL);
     pthread_create(&cons,NULL,consumerLoop,NULL);
 
