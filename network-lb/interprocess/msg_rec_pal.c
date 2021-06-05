@@ -22,11 +22,11 @@ void main(){
     key_t key;
     int msgid;
 
-    key=ftok("msg_send_pal.c",95);
+    key=ftok("msg_send_pal.c",5);
 
-    msgid=msgget(key,0666 | IPC_CREAT);
+    msgid=msgget(123456,0666 | IPC_CREAT);
 
-    msgrcv(msgid,&message,sizeof(message),1,0);
+    msgrcv(msgid,message.msg,sizeof(message.msg),1,0);
 
     printf("Data recieved :%s\n",message.msg);
     if(isPallindrome(message.msg)){

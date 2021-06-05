@@ -12,15 +12,15 @@ void main(){
     key_t key;
     int msgid;
 
-    key=ftok("msg_send_pal.c",95);
+    key=ftok("msg_send_pal.c",5);
 
-    msgid=msgget(key,0666 | IPC_CREAT);
+    msgid=msgget(123456,0666 | IPC_CREAT);
     message.type=1;
 
     printf("enter string : ");
     scanf("%s",message.msg);
 
-    msgsnd(msgid,&message,sizeof(message),0);
+    msgsnd(msgid,message.msg,sizeof(message.msg),0);
 
     printf("Data send \n");
 }
