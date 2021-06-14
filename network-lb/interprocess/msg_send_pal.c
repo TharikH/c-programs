@@ -14,13 +14,13 @@ void main(){
 
     key=ftok("msg_send_pal.c",5);
 
-    msgid=msgget(123456,0666 | IPC_CREAT);
+    msgid=msgget(key,0666 | IPC_CREAT);
     message.type=1;
 
     printf("enter string : ");
     scanf("%s",message.msg);
 
-    msgsnd(msgid,message.msg,sizeof(message.msg),0);
+    msgsnd(msgid,&message,sizeof(message),0);
 
     printf("Data send \n");
 }

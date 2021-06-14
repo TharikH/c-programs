@@ -1,1 +1,1 @@
-characters: 16 words: 4 lines:4
+characters: 26 words: 7 lines:2

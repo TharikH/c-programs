@@ -1,27 +1,36 @@
-#include<stdio.h>
-#include<sys/ipc.h>
-#include<sys/msg.h>
+#include <mqueue.h>
+#include <stdio.h>
 #include<string.h>
+#include <stdlib.h>
 
-struct buf{
-    long type;
-    char msg[100];
-};
-void main(){
-    struct buf message;
-    key_t key;
-    int msgid;
+int main() {
+mqd_t q;
+char *buf;
+struct mq_attr *attr1;
+int prio;
+attr1 = malloc(sizeof(struct mq_attr));
 
-    key=ftok("msg_send_pal.c",5);
+q = mq_open("/np",O_RDWR);
 
-    msgid=msgget(key,0666 | IPC_CREAT);
+if(q == -1) {
+ printf("Error");
+}
 
-    
+buf = malloc(10*sizeof(char));
+mq_getattr(q, attr1);
 
-    msgrcv(msgid,&message,sizeof(message),1,1);
-    printf("Data recieved :%s\n",message.msg);
-    msgrcv(msgid,&message,sizeof(message),1,2);
-    printf("Data recieved :%s\n",message.msg);
+mq_receive(q,buf,attr1->mq_msgsize,&prio);
+printf("Priority= %d",prio);
+printf("\nMessage = %s\n",buf);
 
-    msgctl(msgid, IPC_RMID, NULL);
+
+mq_receive(q,buf,attr1->mq_msgsize,&prio);
+printf("Priority= %d",prio);
+printf("\nMessage = %s\n",buf);
+
+
+mq_receive(q,buf,attr1->mq_msgsize,&prio);
+printf("Priority= %d",prio);
+printf("\nMessage = %s\n",buf);
+
 }

@@ -1,28 +1,35 @@
-#include<stdio.h>
-#include<sys/ipc.h>
-#include<sys/msg.h>
+#include <mqueue.h>
+#include <stdio.h>
+#include<string.h>
 
-struct buf{
-    long type;
-    char msg[100];
-};
 
-void main(){
-    struct buf message1,message2;
-    key_t key;
-    int msgid;
+int main() {
 
-    key=ftok("msg_send_pal.c",5);
+	mqd_t q1;
+	
+	char buf1[20],buf2[20],buf3[20];
+	
+	int pr1,pr2,pr3;
+	printf(" Input message one : ");
+	scanf("%s",buf1);
+    printf("\n Input the priority of msg1: ");
+	scanf("%d",&pr1);
 
-    msgid=msgget(key,0666 | IPC_CREAT);
-    message1.type=1;
-    message2.type=2;
-    printf("enter string : ");
-    scanf("%s",message1.msg);
-    scanf("%s",message2.msg);
+	printf("\n Input message two : ");
+	scanf("%s",buf2);
+    printf("\n Input the priority of msg2: ");
+	scanf("%d",&pr2);
 
-    msgsnd(msgid,&message1,sizeof(message1),1);
-    msgsnd(msgid,&message2,sizeof(message2),2);
-
-    printf("Data send \n");
+	printf("\n Input message three : ");
+	scanf("%s",buf3);
+	printf("\n Input the priority of msg3: ");
+	scanf("%d",&pr3);
+	
+	q1 = mq_open("/np",O_CREAT|O_RDWR,0666,NULL);
+	if(q1 == -1) {
+	 printf("Error");
+	}
+	mq_send(q1,buf1,strlen(buf1),pr1);
+	mq_send(q1,buf2,strlen(buf2),pr2);
+	mq_send(q1,buf3,strlen(buf3),pr3);
 }

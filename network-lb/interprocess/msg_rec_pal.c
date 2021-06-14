@@ -24,9 +24,9 @@ void main(){
 
     key=ftok("msg_send_pal.c",5);
 
-    msgid=msgget(123456,0666 | IPC_CREAT);
+    msgid=msgget(key,0666 | IPC_CREAT);
 
-    msgrcv(msgid,message.msg,sizeof(message.msg),1,0);
+    msgrcv(msgid,&message,sizeof(message),1,0);
 
     printf("Data recieved :%s\n",message.msg);
     if(isPallindrome(message.msg)){
