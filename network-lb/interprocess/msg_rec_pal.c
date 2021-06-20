@@ -11,9 +11,11 @@ struct buf{
 int isPallindrome(char *str){
     int last=strlen(str)-1,first=0;
     while(first<last){
-        if(str[first++] != str[last--]){
+        if(str[first] != str[last] && str[first]-32 != str[last] && str[first]+32 != str[last]){
             return 0;
         }
+        first++;
+        last--;
     }
     return 1;
 }

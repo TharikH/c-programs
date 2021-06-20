@@ -18,9 +18,8 @@ void main(){
     message.type=1;
 
     printf("enter string : ");
-    scanf("%s",message.msg);
-
+    scanf("%[^\n]s",message.msg);
     msgsnd(msgid,&message,sizeof(message),0);
 
-    printf("Data send \n");
+    printf("Data send : %s\n",message.msg);
 }
