@@ -2,7 +2,7 @@
 #include<stdlib.h>
 #include<sys/types.h>
 #include<sys/msg.h>
-#include <sys/shm.h>
+#include<sys/shm.h>
 #include<string.h>
 
 #define MAX 10
