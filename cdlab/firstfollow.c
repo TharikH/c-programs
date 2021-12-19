@@ -46,6 +46,10 @@ void copyFirst(int index,int tempindex,char **first){
     int i=0,j=0;
     while (first[tempindex][j] != '\0')
     {
+        if(first[tempindex][j] == 'e'){
+            j++;
+            continue;
+        }
         i=0;
         while (first[index][i] != '\0' && first[index][i] != first[tempindex][j])
         {
@@ -62,7 +66,19 @@ void copyFirst(int index,int tempindex,char **first){
     
 
 }
-void firstOfNonTerminal(char *nonterminals,int index,char **production,char *terminals,char ** first,int m,int n,int num){
+int haveEpsilon(int index,char **first){
+    int i=0;
+    while (first[index][i] != '\0')
+    {
+        if(first[index][i] == 'e'){
+            return 1;
+        }
+        i++;
+    }
+    return 0;
+    
+}
+void firstOfNonTerminal(char *nonterminals,int index,char **production,char *terminals,char ** first,int m,int n,int num,int check){
     int tempindex;
     char *temp;
     if(first[index][0] != '\0'){
@@ -72,49 +88,50 @@ void firstOfNonTerminal(char *nonterminals,int index,char **production,char *ter
         {
             if(production[i][0] == nonterminals[index]){
                 temp=production[i]+3;
-                if(isTerminal(terminals,temp[0],n)){
+                if(isTerminal(terminals,temp[0],n) || temp[0] == 'e'){
                 addToFirst(temp[0],first,index);
-                }else{
+                }
+                else{
+                    L1:
+                    if(temp[0] == '\0'){
+                        addToFirst('e',first,index);
+                        continue;
+                    }
+                    printf("%c ",temp[0]);
                     tempindex=findIndexOfNonterminal(nonterminals,temp[0],m);
                 if(first[tempindex][0] != '\0'){
                     copyFirst(index,tempindex,first);
-                }else{
-                    firstOfNonTerminal(nonterminals,tempindex,production,terminals,first,m,n,num);
+                    if(haveEpsilon(tempindex,first)){
+                        temp++;
+                        goto L1;
+                    }
+                }
+                else{
+                    if(check != -1 && first[check][0] == '\0'){
+                        return;
+                    }
+                    firstOfNonTerminal(nonterminals,tempindex,production,terminals,first,m,n,num,index);
                     copyFirst(index,tempindex,first);
+                    if(haveEpsilon(tempindex,first)){
+                        temp++;
+                        goto L1;
+                    }
                 }
                 }
             }
         }
         
     }
-    // index=findIndexOfNonterminal(nonterminals,nonterminal],m);
-    // printf("%d - hello\n",index);
-    // temp=production[i]+3;
-    //     // printf("%s\n",temp);
-    //     if(isTerminal(terminals,temp[0],n)){
-    //         addToFirst(temp[0],first,index,num);
-    //     }else{
-    //         tempindex=findIndexOfNonterminal(nonterminals,temp[0],m);
-    //         if(first[tempindex][0] != '\0'){
-    //             copyFirst(index,tempindex,first);
-    //         }else{
-    //             findFirst(nonterminals,terminals,production,)
-    //         }
-    //     }
 }
 void findFirsts(char *nonterminals,char *terminals,char **production,char **first,int m,int n,int num){
-    // for (int i = 0; i < num; i++)
-    // {
-    //     firstOfNonTerminal()
-    // }
     for (int i = 0; i < m; i++)
     {
-        firstOfNonTerminal(nonterminals,i,production,terminals,first,m,n,num);
+        firstOfNonTerminal(nonterminals,i,production,terminals,first,m,n,num,-1);
     }
     
 }
 void main(){
-    int m=3,n=2,num=4;
+    int m=6,n=6,num=9;
     char *terminals=malloc(sizeof(char) * n),*nonterminals=malloc(sizeof(char)*m),**production=malloc(sizeof(char *) * num),**first=malloc(sizeof(char *) * m);
     for (int i = 0; i < num; i++)
     {
@@ -126,15 +143,25 @@ void main(){
         first[i][0]='\0';
     }
     
-    terminals[0]='a';terminals[1]='b';
-    nonterminals[0]='S';nonterminals[1]='A';nonterminals[2]='B';
-    strcpy(production[0],"S->aA");strcpy(production[1],"S->Ab");strcpy(production[2],"A->Ba");strcpy(production[3],"B->b");
+    terminals[0]='a';terminals[1]='h';terminals[2]='c';terminals[3]='b';terminals[4]='g';terminals[5]='f';
+    nonterminals[0]='S';nonterminals[1]='B';nonterminals[2]='C';nonterminals[3]='D';nonterminals[4]='E';nonterminals[5]='F';
+    strcpy(production[0],"S->aBDh");strcpy(production[1],"B->cC");
+    strcpy(production[2],"C->bC");strcpy(production[3],"C->e");strcpy(production[4],"D->EF");
+    strcpy(production[5],"E->g");strcpy(production[6],"E->e");strcpy(production[7],"F->f");strcpy(production[8],"F->e");
 
     findFirsts(nonterminals,terminals,production,first,m,n,num);
-
+    int j=0;
     for (int i = 0; i < m; i++)
     {
-        printf("%s\n",first[i]);
+        printf("%c = {",nonterminals[i]);
+        j=0;
+        while (first[i][j] != '\0')
+        {
+            printf("%c,",first[i][j]);
+            j++;
+        }
+        
+        printf("}\n");
     }
     
 }
