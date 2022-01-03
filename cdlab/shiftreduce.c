@@ -27,7 +27,7 @@ char pop(){
 }
 int isReducible(char ** production,int num){
     char *prod;
-    int j=0,flag,len;
+    int j=0,flag,len,max=-1;
     for (int i = 0; i < num; i++)
     {
         prod=production[i]+3;
@@ -45,10 +45,12 @@ int isReducible(char ** production,int num){
         }
         if(flag == 0){
             // printf("%s -- %s\n",production[i],stack);
-            return i;
+            if(max == -1 || strlen(production[max]) < strlen(production[i])){
+                max=i;
+            }
         }
     }
-    return -1;
+    return max;
 }
 void reduce(char **production,int num,char *input){
     int len,index;
@@ -62,6 +64,9 @@ void reduce(char **production,int num,char *input){
         push(production[index][0]);
         printf("reduce %s\n",production[index]);
         printf("%s\t%s\t",stack,input);
+        if(input[0] == '$' && stack[0] == '$' && stack[1] == production[0][0] && stack[2] == '\0'){
+            return;
+        }
         reduce(production,num,input);
         
     }
